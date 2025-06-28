@@ -95,7 +95,7 @@ module.exports = {
     return `
       ${standard}
       ${p.keycaps ? keycap : ''}
-      ${pins('-', '', 'B')}
+      ${p.reverse ? '' : pins('-', '', 'B')}
       ${p.reverse ? pins('', '-', 'F') : ''}
       )
     `

@@ -9,12 +9,17 @@ module.exports = {
   },
   body: p => {
     // SMD pads on both sides: SOD-123 footprint
-    const smdPads = p.smd ? `
-      (pad 1 smd rect (at -1.65 0 ${p.r}) (size 1.2 1.2) (layers F.Cu F.Paste F.Mask) ${p.to})
-      (pad 2 smd rect (at 1.65 0 ${p.r}) (size 1.2 1.2) (layers B.Cu B.Paste B.Mask) ${p.from})
-      (pad 1 smd rect (at -1.65 0 ${p.r}) (size 1.2 1.2) (layers B.Cu B.Paste B.Mask) ${p.to})
-      (pad 2 smd rect (at 1.65 0 ${p.r}) (size 1.2 1.2) (layers F.Cu F.Paste F.Mask) ${p.from})
-    ` : '';
+    // const smdPads = p.smd ? `
+    //   (pad 1 smd rect (at -1.65 0 ${p.r}) (size 1.2 1.2) (layers F.Cu F.Paste F.Mask) ${p.to})
+    //   (pad 2 smd rect (at 1.65 0 ${p.r}) (size 1.2 1.2) (layers B.Cu B.Paste B.Mask) ${p.from})
+    //   (pad 1 smd rect (at -1.65 0 ${p.r}) (size 1.2 1.2) (layers B.Cu B.Paste B.Mask) ${p.to})
+    //   (pad 2 smd rect (at 1.65 0 ${p.r}) (size 1.2 1.2) (layers F.Cu F.Paste F.Mask) ${p.from})
+    // ` : '';
+   const smdPads = p.smd ? `
+        (pad 2 smd rect (at 1.65 0 ${p.r}) (size 1.2 1.2) (layers B.Cu B.Paste B.Mask) ${p.from})
+        (pad 1 smd rect (at -1.65 0 ${p.r}) (size 1.2 1.2) (layers B.Cu B.Paste B.Mask) ${p.to})
+      ` : '';
+
 
     // THT terminals
     const thtTerminals = p.tht ? `
@@ -36,6 +41,38 @@ module.exports = {
       `;
     }
 
+    // return `
+    //   (module ComboDiode (layer F.Cu) (tedit 5B24D78E)
+    //     ${p.at /* parametric position */}
+    //
+    //     ${'' /* footprint reference */}
+    //     (fp_text reference "${p.ref}" (at 0 -2 ${p.r}) (layer F.SilkS) ${p.ref_hide} (effects (font (size 1 1) (thickness 0.15))))
+    //     (fp_text value "" (at 0 -2) (layer F.Fab) hide (effects (font (size 1 1) (thickness 0.15))))
+    //
+    //     ${''/* diode symbols */}
+    //     (fp_line (start 0.25 0) (end 0.75 0) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start 0.25 0.4) (end -0.35 0) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start 0.25 -0.4) (end 0.25 0.4) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start -0.35 0) (end 0.25 -0.4) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start -0.35 0) (end -0.35 0.55) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start -0.35 0) (end -0.35 -0.55) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start -0.75 0) (end -0.35 0) (layer F.SilkS) (width 0.15))
+    //     (fp_line (start 0.25 0) (end 0.75 0) (layer B.SilkS) (width 0.15))
+    //     (fp_line (start 0.25 0.4) (end -0.35 0) (layer B.SilkS) (width 0.15))
+    //     (fp_line (start 0.25 -0.4) (end 0.25 0.4) (layer B.SilkS) (width 0.15))
+    //     (fp_line (start -0.35 0) (end 0.25 -0.4) (layer B.SilkS) (width 0.15))
+    //     (fp_line (start -0.35 0) (end -0.35 0.55) (layer B.SilkS) (width 0.15))
+    //     (fp_line (start -0.35 0) (end -0.35 -0.55) (layer B.SilkS) (width 0.15))
+    //     (fp_line (start -0.75 0) (end -0.35 0) (layer B.SilkS) (width 0.15))
+    //
+    //     ${smdPads}
+    //     ${thtTerminals}
+    //     ${vias}
+    //
+    //     (fp_text user "${p.ref}" (at 5 0 ${p.r}) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))
+    //     (fp_text user "${p.ref}" (at 5 0 ${p.r}) (layer B.SilkS) (effects (font (size 1 1) (thickness 0.15)) (justify mirror)))
+    //   )
+    // `;
     return `
       (module ComboDiode (layer F.Cu) (tedit 5B24D78E)
         ${p.at /* parametric position */}
@@ -45,13 +82,6 @@ module.exports = {
         (fp_text value "" (at 0 -2) (layer F.Fab) hide (effects (font (size 1 1) (thickness 0.15))))
 
         ${''/* diode symbols */}
-        (fp_line (start 0.25 0) (end 0.75 0) (layer F.SilkS) (width 0.15))
-        (fp_line (start 0.25 0.4) (end -0.35 0) (layer F.SilkS) (width 0.15))
-        (fp_line (start 0.25 -0.4) (end 0.25 0.4) (layer F.SilkS) (width 0.15))
-        (fp_line (start -0.35 0) (end 0.25 -0.4) (layer F.SilkS) (width 0.15))
-        (fp_line (start -0.35 0) (end -0.35 0.55) (layer F.SilkS) (width 0.15))
-        (fp_line (start -0.35 0) (end -0.35 -0.55) (layer F.SilkS) (width 0.15))
-        (fp_line (start -0.75 0) (end -0.35 0) (layer F.SilkS) (width 0.15))
         (fp_line (start 0.25 0) (end 0.75 0) (layer B.SilkS) (width 0.15))
         (fp_line (start 0.25 0.4) (end -0.35 0) (layer B.SilkS) (width 0.15))
         (fp_line (start 0.25 -0.4) (end 0.25 0.4) (layer B.SilkS) (width 0.15))
@@ -64,9 +94,9 @@ module.exports = {
         ${thtTerminals}
         ${vias}
 
-        (fp_text user "${p.ref}" (at 5 0 ${p.r}) (layer F.SilkS) (effects (font (size 1 1) (thickness 0.15))))
         (fp_text user "${p.ref}" (at 5 0 ${p.r}) (layer B.SilkS) (effects (font (size 1 1) (thickness 0.15)) (justify mirror)))
       )
     `;
+
   }
 }

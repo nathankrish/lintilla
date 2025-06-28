@@ -1,7 +1,7 @@
 meta:
-  author: chad@transtrum.net
-  version: &version v1.0
-  repository: &repo https://github.com/ctranstrum/lintilla
+  author: Krish Nathan 
+  version: &version v1.1
+  repository: &repo https://github.com/nathankrish/lintilla
 
   # Depending on where you are ordering from, uncomment or edit one of these:
   order_num_template: &order_text JLCJLCJLCJLC # for ordering from JLCpcb.com
@@ -145,7 +145,7 @@ points:
     mcu:
       anchor:
         ref: matrix_inner_top
-        shift: [26, 0]
+        shift: [26, 2]
         #columns.xiao.rows.ble:
       key:
         tags: [mcu, component]
@@ -198,6 +198,16 @@ points:
         shift: [hdx + 2, hdy]
       key:
         tags: [screw, hardware]
+    battery_jack:
+      anchor:
+        ref: matrix_inner_bottom
+        shift: [37.5, 16.5]
+        rotate: 270
+
+  rotate: -5
+  mirror: &mirror
+    ref: matrix_inner_top
+    distance: 5dx
 
 outlines:
   # Get the basic PCB outline
@@ -209,7 +219,7 @@ outlines:
       size: [cx + 4, cy + 4]
     - what: rectangle
       where: mcu
-      size: [30, 21]
+      size: [30, 33]
     - what: rectangle
       where: battery
       size: [30, 60]
@@ -217,29 +227,29 @@ outlines:
   pcb_fill:
     - what: outline
       name: _raw
-      fillet: 3
+      fillet: 2
 
-  # Underneath the board, including space for battery wires and solder
-  # so that's why it's larger than it needs to be
-  _xiao_cutout:
-    - what: rectangle
-      where: mcu
-      size: [14, 25]
-      adjust.shift: [0, -4]
-
-  # Put a tiny wall on the bottom half
-  _xiao_cutout_wall:
-    - what: rectangle
-      where: mcu
-      size: [19, 21.5]
-      corner: 1
-
-  # Make some room for the solder
-  _xiao_cutout_solder:
-    - what: rectangle
-      where: mcu
-      size: [19, 18]
-      corner: 1
+  # # Underneath the board, including space for battery wires and solder
+  # # so that's why it's larger than it needs to be
+  # _xiao_cutout:
+  #   - what: rectangle
+  #     where: mcu
+  #     size: [14, 25]
+  #     adjust.shift: [0, -4]
+  #
+  # # Put a tiny wall on the bottom half
+  # _xiao_cutout_wall:
+  #   - what: rectangle
+  #     where: mcu
+  #     size: [19, 21.5]
+  #     corner: 1
+  #
+  # # Make some room for the solder
+  # _xiao_cutout_solder:
+  #   - what: rectangle
+  #     where: mcu
+  #     size: [19, 18]
+  #     corner: 1
 
   # Make a tiny hole for the blinky light
   _xiao_light_guide_right:
@@ -295,8 +305,7 @@ outlines:
 
   pcb_outline:
     - pcb_fill
-    - -_xiao_bottom_pads
-    - -_battery_cutout
+    # - -_battery_cutout
 
   # Now set up the holes in the plate for the switches
   _switch_outline_holes:
@@ -758,21 +767,6 @@ cases:
       shift: [0, 0, 0.8]
       operation: subtract
     - what: outline
-      name: _xiao_cutout
-      extrude: 2.5
-      shift: [0, 0, 0.7]
-      operation: subtract
-    - what: outline
-      name: _xiao_cutout_wall
-      extrude: 1.2
-      shift: [0, 0, 2]
-      operation: subtract
-    - what: outline
-      name: _xiao_cutout_solder
-      extrude: 0.4
-      shift: [0, 0, 1.6]
-      operation: subtract
-    - what: outline
       name: _reset_hollow
       extrude: 1.8
       shift: [0, 0, 1.4]
@@ -812,7 +806,7 @@ pcbs:
         outline: pcb_outline
     params:
       name: Lintilla
-      paper: A4
+      paper: A3
 
     footprints:
       hotswap_sockets:
@@ -822,7 +816,7 @@ pcbs:
           from: "{{colpin}}"
           to: "{{colrow}}"
           keycaps: true
-          reverse: true
+          reverse: false 
           hotswap: true
           vias: true
         adjust.rotate: 180
@@ -840,157 +834,36 @@ pcbs:
           tht: false
           via: "pad"
 
-      xiao_mcu:
-        what: xiao
+      supermini_mcu:
+        what: supermini 
         where: mcu
         params:
-          orientation: down
-          VUSB: none
-          VCC: none
-          P0: none
-
-      xiao_note:
-        what: text
-        where: mcu
-        adjust.shift: [0, -12]
-        params.text: XIAO BLE FACE DOWN
-
-      battery_wire_guide:
-        what: arc
-        where: battery
-        adjust.shift: [-12, -15]
-
-      xiao_bat_pos_front:
-        what: pad
-        where: battery
-        adjust.shift: [5, 19]
-        params:
-          side: F
-          net: BAT+
-          text: BAT+
-          shape: circle
-          align: right
-          width: 2
-          height: 2
-
-      xiao_bat_pos_back:
-        what: pad
-        where: battery
-        adjust.shift: [-5, 19]
-        params:
-          side: B
-          net: BAT+
-          text: BAT+
-          shape: circle
-          width: 2
-          height: 2
-
-      xiao_bat_pos_via_near:
-        what: via
-        where: battery
-        adjust.shift: [-8, 18.25]
-        params.net: BAT+
-
-      xiao_bat_pos_via_far:
-        what: via
-        where: matrix_inner_home
-        adjust.shift: [hdx -1.5, 1.25]
-        params.net: BAT+
-
-      xiao_reset_front:
-        what: pad
-        where:
-          ref: battery
-          shift: [-5, 19]
-        params:
-          side: F
-          net: RST
-          text: RST
-          shape: circle
-          width: 2
-          height: 2
-
-      xiao_reset_back:
-        what: pad
-        where:
-          ref: battery
-          shift: [5, 19]
-        params:
-          side: B
-          net: RST
-          text: RST
-          shape: circle
-          align: right
-          width: 2
-          height: 2
-
-      xiao_reset_via_near:
-        what: via
-        where: battery
-        adjust.shift: [-8, 19.75]
-        params.net: RST
-
-      xiao_reset_via_far:
-        what: via
-        where: matrix_index_home
-        adjust.shift: [hdx -1.5, -0.3]
-        params.net: RST
-
-      bat_note:
-        what: text
-        where: battery
-        adjust.shift: [12, -18.5]
-        params:
-          text: BATTERY 5 x 20 x 30 mm
-          justify: right
-
-      solder_note:
-        what: text
-        where: matrix_pinky_bottom
-        adjust.shift: [dx, -hdy]
-        params:
-          text: solder all components same side
-          justify: left
-
-      bat_raw_pos:
-        what: pad
-        where: battery
+          reversible: false 
+          reverse_mount: true
         adjust:
-          shift: [-14, -10]
-          rotate: -90
-        params:
-          net: RAW
-          text: BAT+
-          shape: circle
-          align: right
-          width: 2
-          height: 2
+          rotate: 0
+          shift: [0, 0]
 
-      bat_raw_pos_via:
-        what: via
-        where: matrix_inner_bottom
-        adjust.shift: [-hdx, -hdy]
-        params.net: RAW
+      battery_jack:
+        what: battery_jack
+        where: battery_jack
 
-      bat_raw_neg:
-        what: pad
-        where: battery
-        adjust:
-          shift: [-10, -19]
-        params:
-          net: GND
-          text: BAT-
-          width: 2
-          height: 2
-
-      reset_front:
-        what: evqpuc
-        where: reset
-        params:
-          side: F
-          from: GND
-          to: RST
-
+      # bat_note:
+      #   what: text
+      #   where: battery
+      #   adjust.shift: [12, -18.5]
+      #   params:
+      #     text: BATTERY 5 x 20 x 30 mm
+      #     justify: right
+      #
+      # solder_note:
+      #   what: text
+      #   where: matrix_pinky_bottom
+      #   adjust.shift: [dx, -hdy]
+      #   params:
+      #     text: solder all components same side
+      #     justify: left
+      #
       reset_back:
         what: evqpuc
         where: reset
@@ -998,29 +871,20 @@ pcbs:
           side: B
           from: GND
           to: RST
-
+ 
       reset_note:
         what: text
         where: reset
         adjust.shift: [6, 1]
         params.text: RESET
 
-      power_front:
-        what: trislider
-        where: power
-        params:
-          side: F
-          COM: RAW
-          A: BAT+
-
       power_back:
         what: trislider
         where: power
         params:
           side: B
-          posts: false
           COM: RAW
-          B: BAT+
+          A: BAT+
 
       power_label:
         what: text
@@ -1060,18 +924,7 @@ pcbs:
           layer: Cu
           size: 3
           thickness: 0.5
-
-      allitnil_name:
-        what: text
-        where: matrix_middle_top
-        adjust.shift: [-dx - 2, hdy - 3]
-        params:
-          side: B
-          text: Allitnil
-          layer: Cu
-          size: 3
-          thickness: 0.5
-
+ 
       board_version:
         what: text
         where: matrix_middle_top
@@ -1087,16 +940,6 @@ pcbs:
         params:
           text: *repo
           justify: right
-
-      license_note:
-        what: text
-        where: battery
-        adjust:
-          shift: [13.5, 13]
-          rotate: 90
-        params:
-          text: Licensed under CERN-OHL-P v2
-          justify: left
 
       order_number:
         what: text
